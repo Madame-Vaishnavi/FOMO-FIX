@@ -5,14 +5,17 @@ public class BookingRequestDTO {
     private String categoryName;
     private int seatsRequested;
     private String userEmail;
+    private String userId;
 
-    public BookingRequestDTO() {}
+    public BookingRequestDTO() {
+    }
 
-    public BookingRequestDTO(int eventId, String categoryName, int seatsRequested, String userEmail) {
+    public BookingRequestDTO(int eventId, String categoryName, int seatsRequested, String userEmail, String userId) {
         this.eventId = eventId;
         this.categoryName = categoryName;
         this.seatsRequested = seatsRequested;
         this.userEmail = userEmail;
+        this.userId = userId;
     }
 
     public int getEventId() {
@@ -45,5 +48,13 @@ public class BookingRequestDTO {
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

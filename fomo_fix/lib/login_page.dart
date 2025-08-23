@@ -68,14 +68,13 @@ class _LoginPageState extends State<LoginPage> {
                           borderRadius: BorderRadius.circular(12.0),
                           border: Border.all(color: Colors.white.withOpacity(0.2)),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
                           child: Row(
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).inputDecorationTheme.fillColor,
+                                  // Using a fixed color in case the theme's fillColor is not what you expect
+                                  color: Colors.grey[850]?.withOpacity(0.5),
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
                                 child: const Row(
@@ -97,14 +96,18 @@ class _LoginPageState extends State<LoginPage> {
                               Expanded(
                                 child: TextFormField(
                                   keyboardType: TextInputType.phone,
-                                  style: const TextStyle(color: Colors.white), // Set text color here
+                                  style: const TextStyle(color: Colors.white),
                                   decoration: const InputDecoration(
                                     hintText: '0623691060',
-                                    hintStyle: TextStyle(color: Colors.white70), // Set hint text color
+                                    hintStyle: TextStyle(color: Colors.white70),
                                     fillColor: Colors.transparent,
                                     filled: true,
                                     border: InputBorder.none,
+                                    // --- FIX: Vertically center the text ---
+                                    contentPadding: EdgeInsets.symmetric(vertical: 14.0), // Adjust padding
+                                    counterText: "", // Hides the character counter
                                   ),
+                                  maxLength: 10,
                                 ),
                               ),
                             ],
@@ -112,7 +115,6 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
-                  ),
                   const SizedBox(height: 16.0),
 
                   // --- Blurred Container for Password/OTP Input ---
@@ -121,7 +123,6 @@ class _LoginPageState extends State<LoginPage> {
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12.0),
@@ -129,13 +130,15 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         child: TextFormField(
                           obscureText: !_isPasswordVisible,
-                          style: const TextStyle(color: Colors.white), // Set text color here
+                          style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             hintText: 'Enter OTP',
-                            hintStyle: const TextStyle(color: Colors.white70), // Set hint text color
+                            hintStyle: const TextStyle(color: Colors.white70),
                             fillColor: Colors.transparent,
                             filled: true,
                             border: InputBorder.none,
+                            // --- FIX: Vertically center the text ---
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 18.0),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
@@ -199,16 +202,14 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 24.0),
-
-                  // --- UPDATED: Google Sign-in Button (Made Smaller Horizontally) ---
                   Center(
                     child: InkWell(
                       onTap: () {
                         // TODO: Implement Google Sign-in logic
                       },
-                      borderRadius: BorderRadius.circular(12.0), // For the ripple effect
+                      borderRadius: BorderRadius.circular(12.0),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0), // Reduced horizontal padding
+                        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.0),
                           border: Border.all(color: Colors.white.withOpacity(0.4)),
@@ -217,8 +218,8 @@ class _LoginPageState extends State<LoginPage> {
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Image(image: AssetImage("assets/google.png"), width: 22), // Slightly smaller icon
-                            const SizedBox(width: 8.0), // Reduced spacing
+                            const Image(image: AssetImage("assets/google.png"), width: 22),
+                            const SizedBox(width: 8.0),
                             const Text(
                               "Continue with Google",
                               style: TextStyle(fontSize: 14, color: Colors.white),

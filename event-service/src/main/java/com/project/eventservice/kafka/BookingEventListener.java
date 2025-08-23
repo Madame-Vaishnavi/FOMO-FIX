@@ -17,7 +17,7 @@ public class BookingEventListener {
     public void handleBookingCreated(Map<String, Object> bookingEvent) {
         Integer eventId = (Integer) bookingEvent.get("eventId");
         String categoryName = (String) bookingEvent.get("categoryName");
-        Integer seatsBooked = (Integer) bookingEvent.get("seatsBooked");
+        Integer seatsBooked = (Integer) bookingEvent.get("seatBooked");
 
         eventService.decrementAvailableSeats(eventId, categoryName, seatsBooked);
     }

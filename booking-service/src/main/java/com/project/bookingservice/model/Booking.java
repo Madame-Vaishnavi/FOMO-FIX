@@ -21,12 +21,15 @@ public class Booking {
     private int seatBooked;
     private double price;
     private String userEmail;
+    private String userId;
     private LocalDateTime bookingtime;
     private String status;
 
-    public Booking() {}
+    public Booking() {
+    }
 
-    public Booking(int id, int eventId, String eventName, String categoryName, int seatBooked, double price, String userEmail, LocalDateTime bookingtime, String status) {
+    public Booking(int id, int eventId, String eventName, String categoryName, int seatBooked, double price,
+            String userEmail, String userId, LocalDateTime bookingtime, String status) {
         this.id = id;
         this.eventId = eventId;
         this.eventName = eventName;
@@ -34,6 +37,7 @@ public class Booking {
         this.seatBooked = seatBooked;
         this.price = price;
         this.userEmail = userEmail;
+        this.userId = userId;
         this.bookingtime = bookingtime;
         this.status = status;
     }
@@ -92,6 +96,14 @@ public class Booking {
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public LocalDateTime getBookingtime() {

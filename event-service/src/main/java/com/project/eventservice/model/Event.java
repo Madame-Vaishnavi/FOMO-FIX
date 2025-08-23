@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.project.eventservice.enums.EventCategory;
 
 @Entity
 @Table(name = "events")
@@ -23,6 +24,10 @@ public class Event {
     @Column(nullable = false)
     private LocalDateTime date;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private EventCategory category;
+
     @ElementCollection
     @CollectionTable(
             name = "seat_categories",
@@ -30,19 +35,32 @@ public class Event {
     )
     private List<SeatCategory> seatCategories = new ArrayList<>();
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     // Constructors
     public Event() {}
 
-    public Event(int id, String name, String description, String location, LocalDateTime date, List<SeatCategory> seatCategories) {
+    public Event(int id, String name, String description, String location, LocalDateTime date,EventCategory category, List<SeatCategory> seatCategories, String imageUrl) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.location = location;
         this.date = date;
+        this.category = category;
         this.seatCategories = seatCategories;
+        this.imageUrl = imageUrl;
     }
 
     // Getters and Setters
+
+    public EventCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(EventCategory category) {
+        this.category = category;
+    }
 
     public int getId() {
         return id;
@@ -90,6 +108,14 @@ public class Event {
 
     public void setSeatCategories(List<SeatCategory> seatCategories) {
         this.seatCategories = seatCategories;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     // Embeddable class for seat categories

@@ -32,6 +32,11 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getBookingsByUser(email));
     }
 
+    @GetMapping("/user-id/{userId}")
+    public ResponseEntity<List<BookingResponseDTO>> getBookingByUserId(@PathVariable String userId) {
+        return ResponseEntity.ok(bookingService.getBookingsByUserId(userId));
+    }
+
     @GetMapping("/event/{eventId}")
     public ResponseEntity<List<BookingResponseDTO>> getBookingByEvent(@PathVariable int eventId) {
         return ResponseEntity.ok(bookingService.getBookingsByEvent(eventId));

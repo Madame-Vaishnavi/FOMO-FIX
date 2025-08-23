@@ -3,6 +3,7 @@ package com.project.eventservice.service;
 import com.project.eventservice.dto.EventRequestDTO;
 import com.project.eventservice.dto.EventResponseDTO;
 import com.project.eventservice.dto.SeatCategoryResponseDTO;
+import com.project.eventservice.enums.EventCategory;
 import com.project.eventservice.model.Event;
 import com.project.eventservice.repository.EventRepository;
 import jakarta.transaction.Transactional;
@@ -30,6 +31,8 @@ public class EventService {
         event.setDescription(request.getDescription());
         event.setLocation(request.getLocation());
         event.setDate(request.getDate());
+        event.setCategory(request.getCategory());
+        event.setImageUrl(request.getImageUrl());
         event.setSeatCategories(request.getSeatCategories().stream()
                 .map(cat -> new Event.SeatCategory(
                         cat.getCategoryName(),
@@ -78,6 +81,8 @@ public class EventService {
         dto.setDescription(event.getDescription());
         dto.setLocation(event.getLocation());
         dto.setDate(event.getDate());
+        dto.setCategory(event.getCategory());
+        dto.setImageUrl(event.getImageUrl());
         dto.setSeatCategories(event.getSeatCategories().stream()
                 .map(cat -> {
                     SeatCategoryResponseDTO catDto = new SeatCategoryResponseDTO();
@@ -107,7 +112,8 @@ public class EventService {
         event.setDescription(request.getDescription());
         event.setLocation(request.getLocation());
         event.setDate(request.getDate());
-        // Replace seat categories
+        event.setCategory(request.getCategory());
+        event.setImageUrl(request.getImageUrl());
         event.setSeatCategories(request.getSeatCategories().stream()
                 .map(cat -> new Event.SeatCategory(
                         cat.getCategoryName(),
@@ -136,4 +142,14 @@ public class EventService {
         eventRepository.save(event);
     }
 
+    public List<EventResponseDTO> getEventsByCategory(String categoryName) {
+        try {
+            EventCategory category = EventCategory.valueOf(categoryName.toUpperCase());
+            return eventRepository.findByCategory(category).stream()
+                    .map(this::toResponseDTO)
+                    .collect(Collectors.toList());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category: " + categoryName);
+        }
+    }
 }

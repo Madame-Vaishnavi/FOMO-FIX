@@ -1,5 +1,6 @@
 package com.project.eventservice.dto;
 
+import com.project.eventservice.enums.EventCategory;
 import com.project.eventservice.model.Event;
 
 import java.time.LocalDateTime;
@@ -10,16 +11,20 @@ public class EventRequestDTO {
     private String description;
     private String location;
     private LocalDateTime date;
+    private EventCategory category;
     private List<SeatCategoryDTO> seatCategories;
+    private String imageUrl;
 
     public EventRequestDTO() {}
 
-    public EventRequestDTO(String name, String description, String location, LocalDateTime date, List<SeatCategoryDTO> seatCategories) {
+    public EventRequestDTO(String name, String description, String location, LocalDateTime date,EventCategory category, List<SeatCategoryDTO> seatCategories, String imageUrl) {
         this.name = name;
         this.description = description;
         this.location = location;
         this.date = date;
+        this.category = category;
         this.seatCategories = seatCategories;
+        this.imageUrl = imageUrl;
     }
 
     public String getName() {
@@ -54,11 +59,27 @@ public class EventRequestDTO {
         this.date = date;
     }
 
+    public EventCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(EventCategory category) {
+        this.category = category;
+    }
+
     public List<SeatCategoryDTO> getSeatCategories() {
         return seatCategories;
     }
 
     public void setSeatCategories(List<SeatCategoryDTO> seatCategories) {
         this.seatCategories = seatCategories;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

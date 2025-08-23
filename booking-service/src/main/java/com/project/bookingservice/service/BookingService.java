@@ -32,19 +32,19 @@ public class BookingService {
 
     public BookingResponseDTO createBooking(BookingRequestDTO request) {
 
-        EventResponseDTO event  = eventServiceClient.getEventById(request.getEventId());
-        if(event==null){
+        EventResponseDTO event = eventServiceClient.getEventById(request.getEventId());
+        if (event == null) {
             throw new IllegalArgumentException("Event not found");
         }
         EventResponseDTO.SeatCategoryDTO category = event.getSeatCategory().stream().filter(
-                cat -> cat.getCategoryName().equalsIgnoreCase(request.getCategoryName())
-        ).findFirst().orElseThrow(() -> new IllegalArgumentException("Seat Category not found"));
+                cat -> cat.getCategoryName().equalsIgnoreCase(request.getCategoryName())).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Seat Category not found"));
 
-        if(category.getAvailableSeats()<request.getSeatsRequested()){
+        if (category.getAvailableSeats() < request.getSeatsRequested()) {
             throw new IllegalArgumentException("Not enough available seats");
         }
 
-        double totalPrice = request.getSeatsRequested()*category.getPricePerSeat();
+        double totalPrice = request.getSeatsRequested() * category.getPricePerSeat();
         Booking booking = new Booking();
         booking.setEventId(event.getId());
         booking.setEventName(event.getName());
@@ -52,18 +52,19 @@ public class BookingService {
         booking.setSeatBooked(request.getSeatsRequested());
         booking.setPrice(totalPrice);
         booking.setUserEmail(request.getUserEmail());
+        booking.setUserId(request.getUserId());
         booking.setBookingtime(LocalDateTime.now());
         booking.setStatus("CONFIRMED");
 
         Booking saved = bookingRepository.save(booking);
 
         Map<String, Object> bookingEvent = new HashMap<>();
-        bookingEvent.put("bookingId",saved.getId());
-        bookingEvent.put("eventId",event.getId());
-        bookingEvent.put("categoryName",category.getCategoryName());
-        bookingEvent.put("seatBooked",request.getSeatsRequested());
-        bookingEvent.put("userEmail",request.getUserEmail());
-        bookingEvent.put("totalAmount",totalPrice);
+        bookingEvent.put("bookingId", saved.getId());
+        bookingEvent.put("eventId", event.getId());
+        bookingEvent.put("categoryName", category.getCategoryName());
+        bookingEvent.put("seatBooked", request.getSeatsRequested());
+        bookingEvent.put("userEmail", request.getUserEmail());
+        bookingEvent.put("totalAmount", totalPrice);
 
         kafkaTemplate.send("booking-created", bookingEvent);
         return toResponseDTO(saved);
@@ -71,6 +72,12 @@ public class BookingService {
 
     public List<BookingResponseDTO> getBookingsByUser(String userEmail) {
         return bookingRepository.findByUserEmail(userEmail).stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<BookingResponseDTO> getBookingsByUserId(String userId) {
+        return bookingRepository.findByUserId(userId).stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -100,6 +107,7 @@ public class BookingService {
         dto.setSeatBooked(booking.getSeatBooked());
         dto.setPrice(booking.getPrice());
         dto.setUserEmail(booking.getUserEmail());
+        dto.setUserId(booking.getUserId());
         dto.setBookingTime(booking.getBookingtime());
         dto.setStatus(booking.getStatus());
         return dto;
