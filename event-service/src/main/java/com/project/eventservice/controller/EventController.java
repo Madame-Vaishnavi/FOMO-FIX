@@ -115,6 +115,28 @@ public class EventController {
         return ResponseEntity.ok(categories);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<EventResponseDTO>> searchEvents(@RequestParam String query) {
+        return ResponseEntity.ok(eventService.searchEvents(query));
+    }
+
+    @GetMapping("/search/category")
+    public ResponseEntity<List<EventResponseDTO>> searchEventsByCategory(
+            @RequestParam String query,
+            @RequestParam String category) {
+        return ResponseEntity.ok(eventService.searchEventsByCategory(query, category));
+    }
+
+    @GetMapping("/upcoming")
+    public ResponseEntity<List<EventResponseDTO>> getUpcomingEvents() {
+        return ResponseEntity.ok(eventService.getUpcomingEvents());
+    }
+
+    @GetMapping("/search/upcoming")
+    public ResponseEntity<List<EventResponseDTO>> searchUpcomingEvents(@RequestParam String query) {
+        return ResponseEntity.ok(eventService.searchUpcomingEvents(query));
+    }
+
     @GetMapping("/images/{filename:.+}")
     public ResponseEntity<Resource> serveImage(@PathVariable String filename) {
         try {

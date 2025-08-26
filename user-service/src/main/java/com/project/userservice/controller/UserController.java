@@ -28,4 +28,22 @@ public class UserController {
         String email = (String) authentication.getPrincipal();
         return service.getUserProfile(email);
     }
+
+    @PatchMapping("/username")
+    public UserProfileDTO updateUsername(Authentication authentication, @RequestBody UsernameUpdateDTO dto) {
+        String email = (String) authentication.getPrincipal();
+        return service.updateUsername(email, dto.getNewUsername());
+    }
+
+    @GetMapping("/booking-history")
+    public BookingHistoryResponseDTO getBookingHistory(Authentication authentication) {
+        String email = (String) authentication.getPrincipal();
+        return service.getBookingHistoryWithPayments(email);
+    }
+
+    // New: booking history by userId (no auth)
+    @GetMapping("/booking-history/by-userId")
+    public BookingHistoryResponseDTO getBookingHistoryByUserId(@RequestParam String userId) {
+        return service.getBookingHistoryWithPaymentsByUserId(userId);
+    }
 }

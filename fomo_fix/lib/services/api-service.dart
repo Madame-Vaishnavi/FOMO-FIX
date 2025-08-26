@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../config.dart';
+import '../config/config.dart';
 
 class ApiService {
   // Get base URL from configuration
@@ -69,6 +69,17 @@ class ApiService {
   static Future<http.Response> patch(String endpoint, dynamic body) async {
     final url = Uri.parse('$baseUrl$endpoint');
     final headers = await _getHeaders();
+    return http.patch(url, headers: headers, body: jsonEncode(body));
+  }
+
+  /// Performs an authenticated PATCH request.
+  static Future<http.Response> patchWithAuth(
+    String token,
+    String endpoint,
+    dynamic body,
+  ) async {
+    final url = Uri.parse('$baseUrl$endpoint');
+    final headers = await _getAuthHeaders(token);
     return http.patch(url, headers: headers, body: jsonEncode(body));
   }
 
@@ -155,5 +166,100 @@ class ApiService {
   /// Gets user profile (requires authentication)
   static Future<http.Response> getUserProfile(String token) async {
     return getWithAuth('/users/profile', token);
+  }
+
+  /// Updates user username (requires authentication)
+  static Future<http.Response> updateUsername(
+    String token,
+    String newUsername,
+  ) async {
+    return patchWithAuth(token, '/users/username', {
+      'newUsername': newUsername,
+    });
+  }
+
+  /// Gets user booking history with payments (requires authentication)
+  static Future<http.Response> getBookingHistory(String token) async {
+    return getWithAuth('/users/booking-history', token);
+  }
+
+  /// Gets user booking history with payments by userId (no auth)
+  static Future<http.Response> getBookingHistoryByUserId(
+    String userId,
+    String token,
+  ) async {
+    final endpoint =
+        '/users/booking-history/by-userId?userId=' +
+        Uri.encodeComponent(userId);
+    return getWithAuth(endpoint, token);
+  }
+
+  /// Searches for events using the backend search endpoint
+  static Future<http.Response> searchEvents(String query) async {
+    final endpoint = '/events/search?query=' + Uri.encodeComponent(query);
+    return get(endpoint);
+  }
+
+  /// Searches for events using the backend search endpoint (authenticated)
+  static Future<http.Response> searchEventsWithAuth(
+    String token,
+    String query,
+  ) async {
+    final endpoint = '/events/search?query=' + Uri.encodeComponent(query);
+    return getWithAuth(endpoint, token);
+  }
+
+  /// Searches for events by category using the backend search endpoint
+  static Future<http.Response> searchEventsByCategory(
+    String query,
+    String category,
+  ) async {
+    final endpoint =
+        '/events/search/category?query=' +
+        Uri.encodeComponent(query) +
+        '&category=' +
+        Uri.encodeComponent(category);
+    return get(endpoint);
+  }
+
+  /// Searches for events by category using the backend search endpoint (authenticated)
+  static Future<http.Response> searchEventsByCategoryWithAuth(
+    String token,
+    String query,
+    String category,
+  ) async {
+    final endpoint =
+        '/events/search/category?query=' +
+        Uri.encodeComponent(query) +
+        '&category=' +
+        Uri.encodeComponent(category);
+    return getWithAuth(endpoint, token);
+  }
+
+  /// Gets upcoming events
+  static Future<http.Response> getUpcomingEvents() async {
+    return get('/events/upcoming');
+  }
+
+  /// Gets upcoming events (authenticated)
+  static Future<http.Response> getUpcomingEventsWithAuth(String token) async {
+    return getWithAuth('/events/upcoming', token);
+  }
+
+  /// Searches for upcoming events
+  static Future<http.Response> searchUpcomingEvents(String query) async {
+    final endpoint =
+        '/events/search/upcoming?query=' + Uri.encodeComponent(query);
+    return get(endpoint);
+  }
+
+  /// Searches for upcoming events (authenticated)
+  static Future<http.Response> searchUpcomingEventsWithAuth(
+    String token,
+    String query,
+  ) async {
+    final endpoint =
+        '/events/search/upcoming?query=' + Uri.encodeComponent(query);
+    return getWithAuth(endpoint, token);
   }
 }

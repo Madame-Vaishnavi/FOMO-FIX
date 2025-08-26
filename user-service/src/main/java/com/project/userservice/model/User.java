@@ -18,6 +18,9 @@ public class User {
     @Column(nullable = false)
     private String name;
 
+    @Column(unique = true)
+    private String username;
+
     @Column(nullable = false)
     private String role = "USER"; // can be USER or ADMIN
 
@@ -46,12 +49,20 @@ public class User {
         this.password = password;
     }
 
-    public String getUsername() {
+    public String getName() {
         return name;
     }
 
-    public void setUsername(String name) {
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getRole() {
@@ -62,4 +73,3 @@ public class User {
         this.role = role;
     }
 }
-

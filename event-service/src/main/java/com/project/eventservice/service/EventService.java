@@ -13,6 +13,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,8 +23,8 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
-//    @Autowired
-//    private KafkaTemplate<String, Object> kafkaTemplate;
+    // @Autowired
+    // private KafkaTemplate<String, Object> kafkaTemplate;
 
     public EventResponseDTO createEvent(EventRequestDTO request) {
         Event event = new Event();
@@ -40,14 +41,14 @@ public class EventService {
                         cat.getPricePerSeat()))
                 .collect(Collectors.toList()));
         Event saved = eventRepository.save(event);
-//        kafkaTemplate.send("event-updates","EVENT CREATED",saved);
+        // kafkaTemplate.send("event-updates","EVENT CREATED",saved);
         return toResponseDTO(saved);
     }
 
     public EventResponseDTO getEventById(int id) {
         return eventRepository.findById(id)
                 .map(this::toResponseDTO)
-                .orElseThrow(()-> new IllegalArgumentException("Event not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
     }
 
     public List<EventResponseDTO> getAllEvents() {
@@ -118,8 +119,7 @@ public class EventService {
                 .map(cat -> new Event.SeatCategory(
                         cat.getCategoryName(),
                         cat.getTotalSeats(),
-                        cat.getPricePerSeat()
-                ))
+                        cat.getPricePerSeat()))
                 .collect(Collectors.toList()));
 
         Event updatedEvent = eventRepository.save(event);
@@ -151,5 +151,46 @@ public class EventService {
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category: " + categoryName);
         }
+    }
+
+    public List<EventResponseDTO> searchEvents(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return getAllEvents();
+        }
+
+        return eventRepository.searchEvents(searchTerm.trim()).stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<EventResponseDTO> searchEventsByCategory(String searchTerm, String categoryName) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return getEventsByCategory(categoryName);
+        }
+
+        try {
+            EventCategory category = EventCategory.valueOf(categoryName.toUpperCase());
+            return eventRepository.searchEventsByCategory(searchTerm.trim(), category).stream()
+                    .map(this::toResponseDTO)
+                    .collect(Collectors.toList());
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid category: " + categoryName);
+        }
+    }
+
+    public List<EventResponseDTO> getUpcomingEvents() {
+        return eventRepository.findUpcomingEvents(LocalDateTime.now()).stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<EventResponseDTO> searchUpcomingEvents(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return getUpcomingEvents();
+        }
+
+        return eventRepository.searchUpcomingEvents(searchTerm.trim(), LocalDateTime.now()).stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
     }
 }
